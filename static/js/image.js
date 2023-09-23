@@ -47,9 +47,9 @@ async function getFacePath($comboBox, areaNumber) {
   let path = "";
   let face_num = $params.faceNum;
   if ($params.faceNum == -2) {
-    path = `pool/${$params.fileName}`;
+    path = SERVER_URL+`/pool/${$params.fileName}`;
   } else {
-    path = `static/aligned_${face_num}_${$params.fileName}`;
+    path = SERVER_URL+`/static/aligned_${face_num}_${$params.fileName}`;
   }
   const exists = await checkFileExists(path);
   return { path, exists, face_num };
