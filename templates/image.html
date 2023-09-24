@@ -84,24 +84,10 @@ block content %}
 
 <script>
     const SERVER_URL="{{config['SERVER_URL']}}"
-    const errors = "{{errors}}"
-        .slice(1, -1)
-        .split(",")
-        .map(function (item) {
-            return item.replace(/&#39;/g, "").trim();
-        });
-    const messages = "{{messages}}"
-        .slice(1, -1)
-        .split(",")
-        .map(function (item) {
-            return item.replace(/&#39;/g, "").trim();
-        });
+    const errors = JSON.parse('{{ errors | tojson | safe}}');
+    const messages = JSON.parse('{{ messages | tojson | safe}}');
 
-    const current_images = "{{current}}"
-        .slice(1, -1)
-        .split(",")
-        .map(function (item) {
-            return item.replace(/&#39;/g, "").trim();
-        });
+    const current_images = JSON.parse('{{ current | tojson | safe}}');
+    const selected_faces = JSON.parse('{{ selected_faces | tojson | safe}}');
 </script>
 {% endblock %}

@@ -47,9 +47,9 @@ async function getFacePath($comboBox, areaNumber) {
   let path = "";
   let face_num = $params.faceNum;
   if ($params.faceNum == -2) {
-    path = SERVER_URL+`/pool/${$params.fileName}`;
+    path = SERVER_URL + `/pool/${$params.fileName}`;
   } else {
-    path = SERVER_URL+`/static/aligned_${face_num}_${$params.fileName}`;
+    path = SERVER_URL + `/static/aligned_${face_num}_${$params.fileName}`;
   }
   const exists = await checkFileExists(path);
   return { path, exists, face_num };
@@ -107,9 +107,19 @@ let file;
 
 $(document).ready(function () {
   let $imgs = [dropArea1Elements.$img, dropArea2Elements.$img];
+  let $comboBoxes = [dropArea1Elements.$comboBox, dropArea2Elements.$comboBox];
   for (let index = 0; index < current_images.length; index++) {
     if (current_images[index] != undefined && current_images[index] !== "") {
-      let path = SERVER_URL+`/pool/${current_images[index]}`;
+      let path;
+      if (selected_faces[index] == -2) {
+        path = SERVER_URL + `/pool/${current_images[index]}`;
+      } else {
+        path =
+          SERVER_URL +
+          `/static/aligned_${selected_faces[index]}_${current_images[index]}`;
+        $comboBoxes[index].val(selected_faces[index])
+        $(`#face_num_input${index+1}`).val(selected_faces[index]);
+      }
       $imgs[index].attr("src", path);
       $imgs[index].removeClass("d-none");
       $imgs[index].removeClass("p-5");
@@ -127,36 +137,17 @@ messages.forEach((message) => {
     addInfoMessage(message);
   }
 });
-$("#compareBtn").on("click", async function () {
-  console.log(current_images);
-  let result1 = await getImgParams(dropArea1Elements.$comboBox, 1);
-  let result2 = await getImgParams(dropArea2Elements.$comboBox, 2);
-  //   if (!result1.exists) {
-  //   }
-  //   if (!result2.exists) {
-  //   }
-  //   both exist
 
-  console.log(result1.fileName);
-  console.log(result2.fileName);
-  await postAction("Compare", {
-    image1: result1.fileName,
-    face1: result1.faceNum,
-    image2: result2.fileName,
-    face2: result2.faceNum,
-  });
-});
-function deleteImage(button){
-    var $dragArea = $(button).parent();
-    unshowFile($dragArea);
-    $(button).remove();
+function deleteImage(button) {
+  var $dragArea = $(button).parent();
+  unshowFile($dragArea);
+  $(button).remove();
 }
-function unshowFile($dragArea){
-    let $img=$dragArea.find("img").attr("src", '');
-    $img.addClass("d-none");
-    $dragArea.addClass("p-5");
-    $dragArea.removeClass("active");
-
+function unshowFile($dragArea) {
+  let $img = $dragArea.find("img").attr("src", "");
+  $img.addClass("d-none");
+  $dragArea.addClass("p-5");
+  $dragArea.removeClass("active");
 }
 function showFile(dragArea, file) {
   let fileType = file.type;

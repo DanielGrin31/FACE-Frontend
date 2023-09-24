@@ -47,6 +47,7 @@ def index():
     uploaded_images = session.get("uploaded_images", [])
     faces_length = session.get("faces_length", [0, 0])
     current_images = session.get("current_images", [])
+    combochanges = session.get("selected_faces", [-2,-2])
 
     if request.method == "POST":
         face_num_1 = int(request.form.get("face_num1"))
@@ -102,10 +103,11 @@ def index():
                     current_images.append(most_similar_image)
                 else:
                     current_images[1] = most_similar_image
-
+                combochanges[1]=data["face"];
                 faces_length[1] = data['face_length'];
         
         session["current_images"] = current_images
+        session["selected_faces"] = combochanges
         session["uploaded_images"] = uploaded_images
         session["faces_length"] = faces_length
 
@@ -116,6 +118,7 @@ def index():
         images=images,
         current=current_images,
         faces_length=faces_length,
+        selected_faces=combochanges,
         errors=errors,
         messages=messages,
     )
