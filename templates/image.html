@@ -17,7 +17,7 @@ block content %}
                         <input type="number" name="face_num{{i+1}}" accept="image/*" value="-2"
                             id="face_num_input{{i+1}}" hidden />
                             <!-- Dont render the second drag&drop if only 1 image uploaded -->
-                        {%if (i!=1) or (current|length!=1)%}
+                        {%if(current|length==0)%}
                         <div class="d-flex align-items-center justify-content-center 
                         flex-column"
                             id="dragarea{{i+1}}-content">

@@ -57,12 +57,16 @@ def index():
         if action == "Upload":
             with tempfile.TemporaryDirectory() as temp_dir:
                 saved_files=saveTempFiles(temp_dir,request.files);
-                response=req.post(SERVER_URL+"/api/upload",files=saved_files)
-                data=response.json();
-                errors=errors+data['errors'];
-                faces_length=data['faces_length'];
-                current_images=[x.filename for x in request.files.values() if x.filename!=''];
-                uploaded_images=uploaded_images+data['images'];
+                if(len(saved_files)>0):
+                    response=req.post(SERVER_URL+"/api/upload",files=saved_files)
+                    data=response.json();
+                    errors=errors+data['errors'];
+                    faces_length=data['faces_length'];
+                    if(len(data['images'])>0):
+                        current_images=[x.filename for x in request.files.values() if x.filename!=''];
+                    uploaded_images=uploaded_images+data['images'];
+                else:
+                    errors.append("Saving Images failed,make sure you uploaded 2 valid images");
         
 
         elif action in ["Detect", "Align"]:

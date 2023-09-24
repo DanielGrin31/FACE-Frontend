@@ -104,7 +104,28 @@ function setupDropArea($dropArea, areaNumber) {
 const dropArea1Elements = setupDropArea($("#dragarea1"), 1);
 const dropArea2Elements = setupDropArea($("#dragarea2"), 2);
 let file;
-
+$(document).keydown(function (event) {
+  if (event.ctrlKey && event.key === 's') {
+    event.preventDefault();
+    $("input[type='submit'][value='Compare']").click();
+  }
+  else if (event.ctrlKey && event.key === 'd') {
+    event.preventDefault();
+    $("input[type='submit'][value='Check']").click();
+  }
+  else if (event.ctrlKey && event.key === 'c') {
+    event.preventDefault();
+    $("input[type='submit'][value='Clear']").click();
+  }
+  else if (event.ctrlKey && event.key === ',') {
+    event.preventDefault();
+    $(".browse-btn:eq(0)").click();
+  }
+  else if (event.ctrlKey && event.key === '.') {
+    event.preventDefault();
+    $(".browse-btn:eq(1)").click();
+  }
+});
 $(document).ready(function () {
   let $imgs = [dropArea1Elements.$img, dropArea2Elements.$img];
   let $comboBoxes = [dropArea1Elements.$comboBox, dropArea2Elements.$comboBox];
@@ -118,7 +139,7 @@ $(document).ready(function () {
           SERVER_URL +
           `/static/aligned_${selected_faces[index]}_${current_images[index]}`;
         $comboBoxes[index].val(selected_faces[index])
-        $(`#face_num_input${index+1}`).val(selected_faces[index]);
+        $(`#face_num_input${index + 1}`).val(selected_faces[index]);
       }
       $imgs[index].attr("src", path);
       $imgs[index].removeClass("d-none");
@@ -151,7 +172,7 @@ function unshowFile($dragArea) {
 }
 function showFile(dragArea, file) {
   let fileType = file.type;
-  let validExtensions = ["image/jpeg", "image/jpg", "image/png"];
+  let validExtensions = ["image/jpeg", "image/jpg", "image/png","image/webp"];
   if (validExtensions.includes(fileType)) {
     let fileReader = new FileReader();
     fileReader.onload = () => {
