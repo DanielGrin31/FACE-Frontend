@@ -127,6 +127,12 @@ $(document).keydown(function (event) {
   }
 });
 $(document).ready(function () {
+  if (messages.length > 0 || errors.length > 0) {
+    const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+    myModal.show();
+  }
+
+
   let $imgs = [dropArea1Elements.$img, dropArea2Elements.$img];
   let $comboBoxes = [dropArea1Elements.$comboBox, dropArea2Elements.$comboBox];
   for (let index = 0; index < current_images.length; index++) {
@@ -148,16 +154,18 @@ $(document).ready(function () {
   }
 });
 
-errors.forEach((error) => {
-  if (error !== "") {
-    addErrorMessage(error);
-  }
-});
-messages.forEach((message) => {
-  if (message !== "") {
-    addInfoMessage(message);
-  }
-});
+
+
+// errors.forEach((error) => {
+//   if (error !== "") {
+//     addErrorMessage(error);
+//   }
+// });
+// messages.forEach((message) => {
+//   if (message !== "") {
+//     addInfoMessage(message);
+//   }
+// });
 
 function deleteImage(button) {
   var $dragArea = $(button).parent();
@@ -170,9 +178,10 @@ function unshowFile($dragArea) {
   $dragArea.addClass("p-5");
   $dragArea.removeClass("active");
 }
+
 function showFile(dragArea, file) {
   let fileType = file.type;
-  let validExtensions = ["image/jpeg", "image/jpg", "image/png","image/webp"];
+  let validExtensions = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
   if (validExtensions.includes(fileType)) {
     let fileReader = new FileReader();
     fileReader.onload = () => {
@@ -186,6 +195,7 @@ function showFile(dragArea, file) {
         <i class="fas fa-solid fa-trash"></i>
         </button>`
       );
+
       dragArea.removeClass("p-5");
     };
     fileReader.readAsDataURL(file);
