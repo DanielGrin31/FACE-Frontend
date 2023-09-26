@@ -8,16 +8,20 @@ block content %}
                 {% for i in range(2) %}
                 <div class="d-flex flex-column col-4">
                     <!-- Drag area  -->
+
                     <div id="dragarea{{i+1}}"
                         class="drag-area position-relative d-flex align-items-center 
-                        justify-content-center flex-column rounded-top-2 p-5
+                        justify-content-center flex-column rounded-top-0 p-5
                         {{'active' if current|length>0 else 'inactive'}}">
-                        <img class="img-fluid d-none position-absolute rounded-top-1 h-100 w-100" alt="" />
+                        {%if current[i]%}
+                        <div class="w-100 bg-dark text-light rounded-top-1 position-absolute top-0 z-3 p-1 text-center fw-boldy">{{current[i]}}</div>
+                        {%endif%}
+                        <img class="img-fluid d-none position-absolute rounded-top-1 z-2 h-100 w-100" alt="" />
                         <input type="file" name="image{{i+1}}" accept="image/*" hidden />
                         <input type="number" name="face_num{{i+1}}" accept="image/*" value="-2"
                             id="face_num_input{{i+1}}" hidden />
                             <!-- Dont render the second drag&drop if only 1 image uploaded -->
-                        {%if(current|length==0)%}
+                        {%if(current|length==0) or (current|length==1 and 1==i)%}
                         <div class="d-flex align-items-center justify-content-center 
                         flex-column"
                             id="dragarea{{i+1}}-content">
@@ -48,19 +52,17 @@ block content %}
                 {% if i == 0 %}
                 <!-- Buttons -->
                 <div class="d-flex col-2 flex-column align-items-center">
-                    {% if current|length==0 %}
-                    <input type="submit" name="action" value="Upload" class="submit-btn rounded-3 w-75 m-2" />
-                    {%else%}
+                    <!-- <input type="submit" name="action" value="Upload" class="submit-btn rounded-3 w-75 m-2" /> -->
                     <input type="submit" name="action" value="Detect" class="submit-btn w-75 m-2" />
                     <input type="submit" name="action" value="Check" class="submit-btn w-75 m-2" />
                     {% if current | length == 2%}
                     <input type="submit" name="action" value="Compare" class="submit-btn w-75 m-2" />
                     {%endif%}
                     <input type="submit" name="action" value="Clear" class="submit-btn w-75 m-2" />
-                    {% endif %}
 
                 </div>
-                {% endif %} {% endfor %}
+                {% endif %}
+                {% endfor %}
             </div>
         </form>
     </div>
@@ -74,10 +76,10 @@ block content %}
             <div class="modal-body">
               <span>
                 {%for message in messages %}
-                    <p class="fw-bold">{{message}}</p>
+                    <p class="fw-bold">{{message|safe}}</p>
                 {% endfor %}
                 {%for error in errors %}
-                <p class="fw-bold text-danger">{{error}}</p>
+                <p class="fw-bold text-danger">{{error|safe}}</p>
                 {% endfor %}
               </p>
             </div>

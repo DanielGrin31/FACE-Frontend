@@ -70,6 +70,16 @@ function setupDropArea($dropArea, areaNumber) {
     const file = this.files[0];
     $dropArea.addClass("active");
     showFile($dropArea, file);
+    $("form").submit(function(eventObj){
+      $("<input />").attr("type", "hidden")
+      .attr("name", "action")
+      .attr("value", "Upload")
+      .appendTo(this);
+      return true;
+    });
+    $("form").submit();
+    $("button").prop("disabled", true);
+    $("input[type='button'], input[type='submit']").prop("disabled", true)
   });
   $dropArea.on("dragover", function (event) {
     event.preventDefault();
@@ -86,6 +96,16 @@ function setupDropArea($dropArea, areaNumber) {
     const file = event.originalEvent.dataTransfer.files[0];
     $input[0].files = event.originalEvent.dataTransfer.files;
     showFile($dropArea, file);
+    $("form").submit(function(eventObj){
+      $("<input />").attr("type", "hidden")
+      .attr("name", "action")
+      .attr("value", "Upload")
+      .appendTo(this);
+      return true;
+    });
+    $("form").submit();
+    $("button").prop("disabled", true);
+    $("input[type='button'], input[type='submit']").prop("disabled", true)
   });
   $comboBox.on("change", async function () {
     let result = await getFacePath($(this), areaNumber);
@@ -169,6 +189,9 @@ $(document).ready(function () {
 
 function deleteImage(button) {
   var $dragArea = $(button).parent();
+  const $input = $dragArea.find("input");
+  $input.val("");
+
   unshowFile($dragArea);
   $(button).remove();
 }
@@ -189,12 +212,12 @@ function showFile(dragArea, file) {
       let $imgElement = dragArea.find("img");
       $imgElement.attr("src", fileURL);
       $imgElement.removeClass("d-none");
-      dragArea.append(
-        `<button type="button" onclick="deleteImage(this)"
-        class="btn btn-danger z-3 text-light position-absolute top-0 end-0 rounded-top-1">
-        <i class="fas fa-solid fa-trash"></i>
-        </button>`
-      );
+      // dragArea.append(
+      //   `<button type="button" onclick="deleteImage(this)"
+      //   class="btn btn-danger z-3 text-light position-absolute top-0 end-0 rounded-top-1">
+      //   <i class="fas fa-solid fa-trash"></i>
+      //   </button>`
+      // );
 
       dragArea.removeClass("p-5");
     };
