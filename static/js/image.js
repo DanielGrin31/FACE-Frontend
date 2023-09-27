@@ -70,11 +70,11 @@ function setupDropArea($dropArea, areaNumber) {
     const file = this.files[0];
     $dropArea.addClass("active");
     showFile($dropArea, file);
-    $("form").submit(function(eventObj){
+    $("form").submit(function (eventObj) {
       $("<input />").attr("type", "hidden")
-      .attr("name", "action")
-      .attr("value", "Upload")
-      .appendTo(this);
+        .attr("name", "action")
+        .attr("value", "Upload")
+        .appendTo(this);
       return true;
     });
     $("form").submit();
@@ -96,11 +96,11 @@ function setupDropArea($dropArea, areaNumber) {
     const file = event.originalEvent.dataTransfer.files[0];
     $input[0].files = event.originalEvent.dataTransfer.files;
     showFile($dropArea, file);
-    $("form").submit(function(eventObj){
+    $("form").submit(function (eventObj) {
       $("<input />").attr("type", "hidden")
-      .attr("name", "action")
-      .attr("value", "Upload")
-      .appendTo(this);
+        .attr("name", "action")
+        .attr("value", "Upload")
+        .appendTo(this);
       return true;
     });
     $("form").submit();

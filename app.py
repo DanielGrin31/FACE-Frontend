@@ -63,7 +63,6 @@ def index():
                     response=req.post(SERVER_URL+"/api/upload",files=saved_files)
                     data=response.json();
                     errors=errors+data['errors'];
-                    # 1: inital:0 
                     if(len(data['images'])>0):
                         max_size=2;
                         initial=len(current_images)-1;
@@ -71,9 +70,9 @@ def index():
                         for i in range(len(uploaded)):
                             current_index=(initial+1+i)%max_size;
                             if(current_index==initial+1):
-                                current_images.append(uploaded[i]);
+                                current_images.append(data['images'][i]);
                             else:
-                                current_images[current_index]=uploaded[i];
+                                current_images[current_index]=data['images'][i];
                             faces_length[current_index]=data['faces_length'][i];
                         
                     uploaded_images=uploaded_images+data['images'];

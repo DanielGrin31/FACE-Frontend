@@ -3,28 +3,30 @@ block content %}
 <div class="content">
     <h1 class="text-light m-4 text-center user-select-none">Upload and Process Images</h1>
     <div class="main-container mb-5">
+
+
         <form action="/" method="POST" enctype="multipart/form-data" class="w-100">
             <div class="d-flex align-items-center justify-content-center">
                 {% for i in range(2) %}
                 <div class="d-flex flex-column col-4">
                     <!-- Drag area  -->
 
-                    <div id="dragarea{{i+1}}"
-                        class="drag-area position-relative d-flex align-items-center 
+                    <div id="dragarea{{i+1}}" class="drag-area position-relative d-flex align-items-center 
                         justify-content-center flex-column rounded-top-0 p-5
                         {{'active' if current|length>0 else 'inactive'}}">
                         {%if current[i]%}
-                        <div class="w-100 bg-dark text-light rounded-top-1 position-absolute top-0 z-3 p-1 text-center fw-boldy">{{current[i]}}</div>
+                        <div
+                            class="w-100 bg-dark text-light rounded-top-1 position-absolute top-0 z-3 p-1 text-center fw-bold">
+                            {{current[i]}}</div>
                         {%endif%}
                         <img class="img-fluid d-none position-absolute rounded-top-1 z-2 h-100 w-100" alt="" />
                         <input type="file" name="image{{i+1}}" accept="image/*" hidden />
                         <input type="number" name="face_num{{i+1}}" accept="image/*" value="-2"
                             id="face_num_input{{i+1}}" hidden />
-                            <!-- Dont render the second drag&drop if only 1 image uploaded -->
+                        <!-- Dont render the second drag&drop if only 1 image uploaded -->
                         {%if(current|length==0) or (current|length==1 and 1==i)%}
                         <div class="d-flex align-items-center justify-content-center 
-                        flex-column"
-                            id="dragarea{{i+1}}-content">
+                        flex-column" id="dragarea{{i+1}}-content">
                             <div class=" text-light user-select-none" style="font-size: 100px;">
                                 <i class="fas fa-cloud-upload-alt"></i>
                             </div>
@@ -51,7 +53,7 @@ block content %}
 
                 {% if i == 0 %}
                 <!-- Buttons -->
-                <div class="d-flex col-2 flex-column align-items-center">
+                <div class=" d-flex col-2 flex-column align-items-center">
                     <!-- <input type="submit" name="action" value="Upload" class="submit-btn rounded-3 w-75 m-2" /> -->
                     <input type="submit" name="action" value="Detect" class="submit-btn w-75 m-2" />
                     <input type="submit" name="action" value="Check" class="submit-btn w-75 m-2" />
@@ -68,28 +70,28 @@ block content %}
     </div>
     <div id="myModal" class="modal" tabindex="-1">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Results</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Results</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span>
+                        {%for message in messages %}
+                        <p class="fw-bold">{{message|safe}}</p>
+                        {% endfor %}
+                        {%for error in errors %}
+                        <p class="fw-bold text-danger">{{error|safe}}</p>
+                        {% endfor %}
+                        </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Ok</button>
+                </div>
             </div>
-            <div class="modal-body">
-              <span>
-                {%for message in messages %}
-                    <p class="fw-bold">{{message|safe}}</p>
-                {% endfor %}
-                {%for error in errors %}
-                <p class="fw-bold text-danger">{{error|safe}}</p>
-                {% endfor %}
-              </p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Ok</button>
-            </div>
-          </div>
         </div>
-      </div>
-      
+    </div>
+
     <div id="messageContainer" style="z-index: 11" class="position-fixed bottom-0 w-25 end-0 p-0"></div>
     <!-- <div class="image-container mt-5 d-flex justify-content-center flex-wrap text-center">
         {% for image_info in images %}
@@ -109,7 +111,7 @@ block content %}
 </div>
 
 <script>
-    const SERVER_URL="{{config['SERVER_URL']}}"
+    const SERVER_URL = "{{config['SERVER_URL']}}"
 
     const errors = JSON.parse('{{ errors | tojson | safe}}');
     const messages = JSON.parse('{{ messages | tojson | safe}}');
