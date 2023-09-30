@@ -150,8 +150,72 @@ $(document).ready(function () {
   if (messages.length > 0 || errors.length > 0) {
     const myModal = new bootstrap.Modal(document.getElementById('myModal'));
     myModal.show();
-  }
 
+  }
+  const video = $('#video')[0]; // Get the video element using jQuery
+
+  if (current_images.length === 0) {
+
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri('/static/models'),
+      faceapi.nets.faceLandmark68Net.loadFromUri('/static/models'),
+      faceapi.nets.faceRecognitionNet.loadFromUri('/static/models')])
+    faceapi.nets.ssdMobilenetv1.loadFromUri('/static/models').then(startVideo);
+
+
+    function startVideo() {
+      navigator.mediaDevices.getUserMedia({ video: {} })
+        .then((stream) => {
+          video.srcObject = stream;
+        })
+        .catch((err) => {
+          console.error('Error accessing the webcam: ', err);
+        });
+      video.addEventListener('play', () => {
+        const canvas = faceapi.createCanvasFromMedia(video);
+        let continueScanning = true;
+
+        $(canvas).addClass("start-0 position-absolute");
+        $("#videoContainer").append(canvas);
+        const displaySize = { width: 640, height: 480 };
+        faceapi.matchDimensions(canvas, displaySize);
+        let scanVideo = setInterval(async () => {
+
+          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+          if (detections.length > 0 && continueScanning) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set the canvas dimensions to match the video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw the current frame of the video onto the canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas to a data URL (base64 encoded)
+            const dataURL = canvas.toDataURL('image/png');
+            const file = dataURLtoFile(dataURL, "videoImage.png");
+            showFile($("#dragarea1"), file);
+            let container = new DataTransfer();
+            container.items.add(file);
+            $("input[type='file'][name='image1']")[0].files = container.files;
+
+            clearInterval(scanVideo);
+            continueScanning = false;
+            $("form").submit(function (eventObj) {
+              $("<input />").attr("type", "hidden")
+                .attr("name", "action")
+                .attr("value", "Upload")
+                .appendTo(this);
+              return true;
+            });
+            $("form").submit();
+          }
+        }, 100);
+      });
+    }
+  }
 
   let $imgs = [dropArea1Elements.$img, dropArea2Elements.$img];
   let $comboBoxes = [dropArea1Elements.$comboBox, dropArea2Elements.$comboBox];
@@ -201,7 +265,17 @@ function unshowFile($dragArea) {
   $dragArea.addClass("p-5");
   $dragArea.removeClass("active");
 }
-
+function dataURLtoFile(dataurl, filename) {
+  var arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[arr.length - 1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}
 function showFile(dragArea, file) {
   let fileType = file.type;
   let validExtensions = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -212,13 +286,7 @@ function showFile(dragArea, file) {
       let $imgElement = dragArea.find("img");
       $imgElement.attr("src", fileURL);
       $imgElement.removeClass("d-none");
-      // dragArea.append(
-      //   `<button type="button" onclick="deleteImage(this)"
-      //   class="btn btn-danger z-3 text-light position-absolute top-0 end-0 rounded-top-1">
-      //   <i class="fas fa-solid fa-trash"></i>
-      //   </button>`
-      // );
-
+      dragArea.addClass("active");
       dragArea.removeClass("p-5");
     };
     fileReader.readAsDataURL(file);
