@@ -17,7 +17,11 @@ input:disabled {
   pointer-events: none; /* Disable pointer events */
   opacity: 0.7;
 }
-
+.submit-btn:disabled{
+  cursor: not-allowed; /* Change cursor style */
+  pointer-events: none; /* Disable pointer events */
+  opacity: 0.7;
+}
 .main-container{
     display: flex;
     align-items: center;

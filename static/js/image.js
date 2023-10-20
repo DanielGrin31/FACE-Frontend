@@ -20,6 +20,76 @@ async function postAction(action, data = {}) {
       document.close();
     });
 }
+
+$("#startVideoBtn").on("click",function(){
+  const video = $('#video')[0]; // Get the video element using jQuery
+  if (current_images.length === 0) {
+    $(this).prop("disabled", true)
+    $('#video').removeClass("d-none");
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri('/static/models'),
+      faceapi.nets.faceLandmark68Net.loadFromUri('/static/models'),
+      faceapi.nets.faceRecognitionNet.loadFromUri('/static/models')])
+    faceapi.nets.ssdMobilenetv1.loadFromUri('/static/models').then(startVideo);
+
+
+    function startVideo() {
+      navigator.mediaDevices.getUserMedia({ video: {} })
+        .then((stream) => {
+          video.srcObject = stream;
+        })
+        .catch((err) => {
+          console.error('Error accessing the webcam: ', err);
+        });
+      video.addEventListener('play', () => {
+        const canvas = faceapi.createCanvasFromMedia(video);
+        let continueScanning = true;
+
+        $(canvas).addClass("start-0 position-absolute");
+        $("#videoContainer").append(canvas);
+        const displaySize = { width: 640, height: 480 };
+        faceapi.matchDimensions(canvas, displaySize);
+        let scanVideo = setInterval(async () => {
+
+          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+          if (detections.length > 0 && continueScanning) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set the canvas dimensions to match the video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw the current frame of the video onto the canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas to a data URL (base64 encoded)
+            const dataURL = canvas.toDataURL('image/png');
+            const randomString = Math.random().toString(36).substring(2, 10);
+            const file = dataURLtoFile(dataURL, `${randomString}.png`);
+            showFile($("#dragarea1"), file);
+            let container = new DataTransfer();
+            container.items.add(file);
+            $("input[type='file'][name='image1']")[0].files = container.files;
+
+            clearInterval(scanVideo);
+            continueScanning = false;
+            $("form").submit(function (eventObj) {
+              $("<input />").attr("type", "hidden")
+                .attr("name", "action")
+                .attr("value", "Upload")
+                .appendTo(this);
+              return true;
+            });
+            $("form").submit();
+          }
+        }, 100);
+      });
+    }
+  }
+});
+
+
 function addErrorMessage(message) {
   $("#messageContainer").append(`
     <div class="alert alert-danger m-1 me-0 d-flex" role="alert">
@@ -152,71 +222,7 @@ $(document).ready(function () {
     myModal.show();
 
   }
-  const video = $('#video')[0]; // Get the video element using jQuery
-
-  if (current_images.length === 0) {
-
-    Promise.all([
-      faceapi.nets.tinyFaceDetector.loadFromUri('/static/models'),
-      faceapi.nets.faceLandmark68Net.loadFromUri('/static/models'),
-      faceapi.nets.faceRecognitionNet.loadFromUri('/static/models')])
-    faceapi.nets.ssdMobilenetv1.loadFromUri('/static/models').then(startVideo);
-
-
-    function startVideo() {
-      navigator.mediaDevices.getUserMedia({ video: {} })
-        .then((stream) => {
-          video.srcObject = stream;
-        })
-        .catch((err) => {
-          console.error('Error accessing the webcam: ', err);
-        });
-      video.addEventListener('play', () => {
-        const canvas = faceapi.createCanvasFromMedia(video);
-        let continueScanning = true;
-
-        $(canvas).addClass("start-0 position-absolute");
-        $("#videoContainer").append(canvas);
-        const displaySize = { width: 640, height: 480 };
-        faceapi.matchDimensions(canvas, displaySize);
-        let scanVideo = setInterval(async () => {
-
-          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
-          if (detections.length > 0 && continueScanning) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
-            // Set the canvas dimensions to match the video
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            // Draw the current frame of the video onto the canvas
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Convert the canvas to a data URL (base64 encoded)
-            const dataURL = canvas.toDataURL('image/png');
-            const file = dataURLtoFile(dataURL, "videoImage.png");
-            showFile($("#dragarea1"), file);
-            let container = new DataTransfer();
-            container.items.add(file);
-            $("input[type='file'][name='image1']")[0].files = container.files;
-
-            clearInterval(scanVideo);
-            continueScanning = false;
-            $("form").submit(function (eventObj) {
-              $("<input />").attr("type", "hidden")
-                .attr("name", "action")
-                .attr("value", "Upload")
-                .appendTo(this);
-              return true;
-            });
-            $("form").submit();
-          }
-        }, 100);
-      });
-    }
-  }
-
+  
   let $imgs = [dropArea1Elements.$img, dropArea2Elements.$img];
   let $comboBoxes = [dropArea1Elements.$comboBox, dropArea2Elements.$comboBox];
   for (let index = 0; index < current_images.length; index++) {
