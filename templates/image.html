@@ -16,13 +16,15 @@ block content %}
                         {{'active' if current|length>0 else 'inactive'}}">
                         {%if current[i]%}
                         <div
-                            class="w-100 bg-dark text-light rounded-top-1 position-absolute top-0 z-3 p-1 text-center fw-bold">
+                            class="w-100 bg-dark text-light rounded-top-1 position-absolute top-0 z-3 p-1 text-center text-truncate fw-bold">
                             {{current[i]}}</div>
                         {%endif%}
                         {%if i==0 and current|length==0%}
-                        <video id="video" class="position-absolute w-100 d-none h-100 object-fit-fill"   autoplay></video>
+                        <video id="video" class="position-absolute w-100 d-none h-100 object-fit-fill" autoplay></video>
                         {%endif%}
-                        <img class="img-fluid d-none position-absolute rounded-top-1 z-2 h-100 w-100" alt="" />
+                        <canvas class="img-fluid d-none position-absolute rounded-top-1 z-2 h-100 w-100" alt="">
+
+                        </canvas>
                         <input type="file" name="image{{i+1}}" accept="image/*" hidden />
                         <input type="number" name="face_num{{i+1}}" accept="image/*" value="-2"
                             id="face_num_input{{i+1}}" hidden />
@@ -43,14 +45,21 @@ block content %}
                         </div>
                         {%endif%}
                     </div>
-                    <div class="form-floating w-100">
-                        <select id="combo-box{{i+1}}" class="form-select rounded-top-0 rounded-bottom-2">
-                            <option value="-2">All</option>
-                            {% for j in range(faces_length[i]) %}
-                            <option value="{{ j }}">Face {{ j + 1 }}</option>
-                            {% endfor %}
-                        </select>
-                        <label class="" for="combo-box{{i+1}}">Select a Face:</label>
+                    <div class="  ">
+
+                        <div class="form-floating">
+                            <select id="combo-box{{i+1}}" class="form-select rounded-0 ">
+                                <option value="-2">All</option>
+                                {% for j in range(faces_length[i]) %}
+                                <option value="{{ j }}">Face {{ j + 1 }}</option>
+                                {% endfor %}
+                            </select>
+                            <label class="" for="combo-box{{i+1}}">Select a Face:</label>
+                        </div>
+                        <div class="w-100">
+                            <button id="findBtn{{i+1}}" class="btn btn-success w-100 rounded-bottom-2 rounded-top-0"
+                                type="button">show faces</button>
+                        </div>
                     </div>
                 </div>
 
@@ -59,7 +68,7 @@ block content %}
                 <div class=" d-flex col-2 flex-column align-items-center">
                     <!-- <input type="submit" name="action" value="Upload" class="submit-btn rounded-3 w-75 m-2" /> -->
                     {% if current | length == 0%}
-                    <button id="startVideoBtn" class="submit-btn rounded-3 w-75 m-2" type="button" >Start Video</button>
+                    <button id="startVideoBtn" class="submit-btn rounded-3 w-75 m-2" type="button">Start Video</button>
                     {%endif%}
                     <input type="submit" name="action" value="Detect" class="submit-btn w-75 m-2" />
                     <input type="submit" name="action" value="Check" class="submit-btn w-75 m-2" />
@@ -72,8 +81,6 @@ block content %}
                 {% endif %}
                 {% endfor %}
             </div>
-
-
         </form>
     </div>
     <div id="myModal" class="modal" tabindex="-1">
@@ -101,21 +108,6 @@ block content %}
     </div>
 
     <div id="messageContainer" style="z-index: 11" class="position-fixed bottom-0 w-25 end-0 p-0"></div>
-    <!-- <div class="image-container mt-5 d-flex justify-content-center flex-wrap text-center">
-        {% for image_info in images %}
-        <div class="aligned-image col-5 m-5">
-            {% if "aligned_" in image_info or "detected_" in image_info %}
-            <img src="{{config['SERVER_URL']+'/static/'+image_info }}" alt="Processed Image" />
-            {% else %}
-            <img src="{{config['SERVER_URL']+'/pool/'+image_info}}" alt="Uploaded Image" />
-            {% endif %} {% if 'aligned_face_' + (selected_face | string) in image_info
-            %}
-            <div class="face-number">{{ selected_face + 1 }}</div>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div> -->
-
 </div>
 
 <script>
