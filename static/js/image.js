@@ -1,28 +1,6 @@
 "use strict";
-async function postData(endpoint, data) {
-  try {
-    const response = await fetch(`http://127.0.0.1:5057/api/${endpoint}`, {
-      method: "POST", // or 'PUT'
-      body:data,
-    });
 
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
 
-async function findFace(image,face_num){
-  let data=new FormData();
-  data.append("image",image)
-  let result=await postData("find",data);
-  if(face_num==-2){
-    return result.boxes;
-    
-  }
-  return [result.boxes[face_num]];
-}
 
 async function loadImage(canvas, src) {
   const ctx = canvas.getContext("2d");
@@ -238,10 +216,6 @@ $(document).keydown(function (event) {
   }
 });
 $(document).ready(function () {
-  if (messages.length > 0 || errors.length > 0) {
-    const myModal = new bootstrap.Modal(document.getElementById("myModal"));
-    myModal.show();
-  }
 
   let $imgs = [dropArea1Elements.$img, dropArea2Elements.$img];
   let $comboBoxes = [dropArea1Elements.$comboBox, dropArea2Elements.$comboBox];

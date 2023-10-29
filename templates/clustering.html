@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block title %} Image Processing {% endblock %}
+{%block content %}
+
+
+<div class="content">
+    <h1 class="text-light m-4 text-center user-select-none">Cluster Images</h1>
+    <div class="main-container mb-5">
+        <button id="clusterBtn" class="submit-btn rounded-3 w-75 m-2" type="button">Cluster Images</button>
+        <button id="groupsBtn" class="submit-btn rounded-3 w-75 m-2" type="button">Get Groups</button>
+    </div>
+    <div class="row m-0">
+
+        {% for groupId, faces in groups.items() %}
+        <div class="col-12">
+            <div class="d-flex  align-items-center h3 text-black">
+                <div>Id: </div>
+                <div class="editableText">{{groupId}}</div>
+                <div class="editButton btn px-1">
+                    <i class="fas fa-pen "></i>
+                </div>
+            </div>
+            <div class="row">
+                {% for face in faces %}
+                <div class="col-3 d-flex flex-column justify-content-center m-0">
+                    <img src="http://127.0.0.1:5057/static/{{face}}" onclick="handleFaceClick(this.src)" />
+                    <p class="text-truncate">{{ face }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+<script src="{{url_for('static', filename='js/clustering.js')}}"></script>
+{% endblock %}
