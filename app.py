@@ -179,6 +179,6 @@ def index():
 
 if __name__ == "__main__":
     try:
-        app.run(debug=True, port=5057)
+        app.run(debug=True, port=5000)
     except Exception as e:
         print(f"Error: {e}")
